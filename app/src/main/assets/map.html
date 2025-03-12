@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart over Norge</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+<div id="map" style="width: 100%; height: 900px;"></div>
+
+<script>
+    // Opprett kartet
+    var map = L.map('map').setView([60.472, 8.4689], 5);  // Midten av Norge og zoomnivå 5
+
+    // Legg til bakgrunnskart
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Markører og popups for hovedbyene i Norge
+    var cities = [
+        {name: "Oslo", lat: 59.9139, lon: 10.7522},
+        {name: "Bergen", lat: 60.39299, lon: 5.32415},
+        {name: "Stavanger", lat: 58.969975, lon: 5.733107},
+        {name: "Trondheim", lat: 63.4305, lon: 10.3951},
+        {name: "Tromsø", lat: 69.6496, lon: 18.956},
+        {name: "Drammen", lat: 59.7439, lon: 10.2045},
+        {name: "Kristiansand", lat: 58.1467, lon: 7.9956},
+        {name: "Fredrikstad", lat: 59.2191, lon: 10.9398},
+        {name: "Sandnes", lat: 58.8572, lon: 5.7343},
+        {name: "Skien", lat: 59.2091, lon: 9.6085},
+        {name: "Ålesund", lat: 62.4720, lon: 6.1549},
+        {name: "Hamar", lat: 60.7945, lon: 11.0688},
+        {name: "Molde", lat: 62.737, lon: 7.161},
+        {name: "Bodø", lat: 67.2816, lon: 14.4049},
+        {name: "Gjøvik", lat: 60.7945, lon: 10.6951},
+        {name: "Larvik", lat: 59.0551, lon: 10.0404},
+        {name: "Porsgrunn", lat: 59.1387, lon: 9.6575},
+        {name: "Kongsberg", lat: 59.6419, lon: 9.6502},
+        {name: "Haugesund", lat: 59.4130, lon: 5.2685}
+    ];
+
+    // Variabel for å lagre det opprinnelige zoomnivået
+    var originalZoomLevel = map.getZoom();
+
+    // Legg til markører for hver by med popup som vises når man klikker
+    cities.forEach(function(city) {
+        var marker = L.marker([city.lat, city.lon]).addTo(map);
+        marker.bindPopup("Her er " + city.name); // Popup bindes, men vises ikke før klikking
+
+        // Når popupen åpnes, lagre zoomnivået og zoom inn på byen
+        marker.on('popupopen', function() {
+            originalZoomLevel = map.getZoom(); // Lagre zoomnivået før popupen åpnes
+            map.setView([city.lat, city.lon], 14); // Zoom inn på byen og gjør den til sentrum
+        });
+
+        // Når popupen lukkes, gå tilbake til originalt zoomnivå
+        marker.on('popupclose', function() {
+            map.setZoom(originalZoomLevel); // Sett zoomnivået tilbake til det opprinnelige
+        });
+    });
+</script>
+
+</body>
+</html>
